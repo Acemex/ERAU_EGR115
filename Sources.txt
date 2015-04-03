@@ -1,0 +1,11 @@
+http://www.adafruit.com/products/419 // Datasheet of keypad matrix with reference init code
+
+http://arduino.cc/en/Tutorial/AnalogInputPins // Analog input pins info
+
+http://playground.arduino.cc/Code/Keypad //Keypad reference info
+
+http://arduino.cc/en/Reference/SDbegin // SD card reference
+
+http://forum.arduino.cc/index.php?topic=127711.0 // Search for string in a text file
+
+http://forum.arduino.cc/index.php?topic=168858.0 // Get input from a keypad
