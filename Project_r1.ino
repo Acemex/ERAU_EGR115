@@ -3,15 +3,14 @@
 #include <Servo.h>
 #include <Keypad.h>
 
-char led_red = A0; // Set up constant values for pin assignments
-char led_yellow = A1;
-char servo = 9;
-char sdpin = 4;
+const char led_red = A0; // Set up constant values for pin assignments
+const char led_yellow = A1;
+const char servo = 9;
+const char sdpin = 4;
 Servo servo1;
 
 
-void setup()
-{
+
 
 
 	//This is the initalization code for the keypad library
@@ -28,7 +27,11 @@ void setup()
 	byte rowPins[rows] = { 0, 1, 2, 3 }; //connect row pins on board
 	byte colPins[cols] = { 5, 6, 7 }; //connect column pins on board
 	
+	Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, rows, cols);
 
+	
+void setup()
+	{
 	servo1.attach(servo); //Attach the the servo to pin 9.
 	servo1.write(90); //Move the servo to neutral for testing
 	
@@ -38,7 +41,23 @@ void setup()
 
 void loop()
 {
+	char instr[4];
+	
+	int incount = 0;
+	while (incount < 3)
+	{
+		char next = keypad.waitForKey();
+		
+		instr[incount] = next;
 
-  /* Do while loop for getting user's input from keypad? */
+
+		for (int flash = 0; flash < next; flash++ )
+		{
+			digitalWrite(led_red, 1);
+			delay(100);
+			digitalWrite(led_red, 0);
+
+		}
+	}
 
 }
