@@ -3,8 +3,11 @@
 #include <Servo.h>
 #include <Keypad.h>
 
-const char led_red = A5; // Set up constant values for pin assignments
-const char led_yellow = A4;
+//const char led_red = A5; // Set up constant values for pin assignments
+//const char led_yellow = A4;
+
+const char led_red = 49; //Mega
+const char led_yellow = 48; //Mega
 const char servo = 9;
 const char sdpin = 4;
 Servo servo1;
@@ -26,12 +29,12 @@ File myFile;
 		{ '*', '0', '#' }
 	};
 
-	//byte rowPins[rows] = { 0, 1, 2, 3 }; //connect row pins on board
-	//byte colPins[cols] = { 5, 6, 7 }; //connect column pins on board
+	//byte rowPins[rows] = { 0, 1, 2, 3 }; //connect row pins on board for Uno
+	//byte colPins[cols] = { 5, 6, 7 }; //connect column pins on board for Uno.
 	byte rowPins[rows] = { 29, 31, 33, 35 }; //MEGA pinout for debug; frees up pins 0 and 1
 	byte colPins[cols] = { 39, 41, 43 }; //MEGA pinout for debug; frees up pins 0 and 1
 	
-	Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, rows, cols);
+	Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, rows, cols); //Initalize keypad.
 
 	
 void setup()
@@ -39,45 +42,56 @@ void setup()
 	//servo1.attach(servo); //Attach the the servo to pin 9.
 	//servo1.write(90); //Move the servo to neutral for testing
 	
+		pinMode(led_red, OUTPUT);
+		pinMode(led_yellow, OUTPUT);
 	SD.begin(sdpin);
 
 	Serial.begin(9600);
 	Serial.println("Hello, World! Lock program beginning");
 
+	//TODO: Add code to unlock door on power cycle here.
+
 }
 
 void loop()
 {
-	String instr = "0000";
+	String instr = "0000"; //This will hold the user's entered code.
 	
-	int incount = 0;
-
-	while (incount < 4)
+	
+	//This handles the user's entry of the code. 
+	for (int incount = 0; incount < 4; incount++) //A for loop allows the user to enter 4 digits on the keypad
 	{
-		char next = keypad.waitForKey();
+		char next = keypad.waitForKey(); //Keypad code, accepts input
+
+		digitalWrite(led_yellow, HIGH);
+		digitalWrite(led_red, HIGH);
+		delay(100);
+		digitalWrite(led_yellow, LOW);
+		digitalWrite(led_red, LOW);
 		
-		Serial.println(next);
+		Serial.println(next); //Debugging code, prints entered data to serial port
 
-		instr.setCharAt(incount, next);
+		instr.setCharAt(incount, next); //Uses the setCharAt bit of String type to change the number in instr.
 
-		Serial.println(instr);
-		incount++;
+		Serial.println(instr); //More debug
 		
 	}
 
 	
 
-	if (instr == "1234")
+	if (instr == "1234") //If the input is valid, provide feedback to user and unlock door
 	{
 		digitalWrite(led_yellow, HIGH);
-		Serial.println("Pattern successful");
+		Serial.println("Pattern successful"); //Debug, comment out for final submission/demos. Or don't, if a MEGA is used.
 		delay(5000);
 		digitalWrite(led_yellow, LOW);
+
+		//TODO: Add door unlock code.
 	}
-	else
+	else //Notify user they were wrong. 
 	{
 		digitalWrite(led_red, HIGH);
-		Serial.println("Pattern failed!");
+		Serial.println("Pattern failed!"); //Same as above.
 		delay(5000);
 		digitalWrite(led_red, LOW);
 		
