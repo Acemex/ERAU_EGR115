@@ -13,7 +13,7 @@ const char sdpin = 4;
 
 Servo servo1;
 
-String buf;
+char buf;
 
 
 
@@ -100,9 +100,9 @@ void loop()
 	}
 
 
-	Serial.println(SD.exists("passwords.txt"));
-	File datafile = SD.open("passwords.txt", FILE_READ);
-	
+	Serial.println(SD.exists("password.txt"));
+	File datafile = SD.open("password.txt", FILE_READ);
+	bool open = 0;
 	Serial.println(datafile);
 	
 	if (datafile)
@@ -110,24 +110,47 @@ void loop()
 		Serial.println("File opened");
 		
 		while (datafile.available()){
-			buf[4] = datafile.read();
+			buf = 0;
 			Serial.println(buf);
-			
-			if (instr == buf)
+
+			String lookup = "0000";
+			int lookup_index = 0;
+			while ((buf != '\n') && (buf != '\r'))
+			{
+				
+				buf = datafile.read();
+				
+				//buf = buf;
+				Serial.println(buf);
+
+				lookup.setCharAt(lookup_index, buf);
+				lookup_index++;
+				Serial.println(lookup);
+				
+
+			}
+
+			if (instr == lookup)
 			{	
 				digitalWrite(led_yellow, HIGH);
 				delay(5000);
 				digitalWrite(led_yellow, LOW);
+				open = 1;
+				break;
 			}
-			else
-			{
-				digitalWrite(led_red, HIGH);
-				delay(5000);
-				digitalWrite(led_red, LOW);
-			}
+
 		
 		}
 		datafile.close();
+		
+		
+		if (open == 0)
+		{
+			digitalWrite(led_red, HIGH);
+			delay(5000);
+			digitalWrite(led_red, LOW);
+
+		}
 	}
 	else
 	{
